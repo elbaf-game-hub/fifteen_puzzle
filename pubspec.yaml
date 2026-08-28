@@ -1,5 +1,11 @@
 name: fifteen_puzzle
 description: 15 Puzzle — Game Hub module.
+
+# Mobile bundle identifiers
+#   Android: applicationId = com.elbaftech.game_hub.fifteen_puzzle
+#   iOS:     CFBundleIdentifier = com.elbaftech.game_hub.fifteen_puzzle
+#   Apply with: ./tool/apply_bundle_ids.sh fifteen_puzzle
+#
 version: 0.1.0
 publish_to: none
 
