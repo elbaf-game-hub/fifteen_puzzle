@@ -250,6 +250,8 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
                                       svgPath,
                                       package: 'game_assets',
                                       fit: BoxFit.cover,
+                                      placeholderBuilder: (context) =>
+                                          _buildFallbackTile(tileVal, isBlank),
                                     ),
                                   ),
                                 ),
@@ -292,6 +294,34 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackTile(int tileVal, bool isBlank) {
+    if (isBlank) {
+      return Container(
+        decoration: BoxDecoration(
+          color: GameTokens.boardDark.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(GameTokens.radiusMd),
+        ),
+      );
+    }
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2D9A1),
+        borderRadius: BorderRadius.circular(GameTokens.radiusMd),
+        border: Border.all(color: const Color(0xFFB89A6A), width: 2),
+      ),
+      child: Center(
+        child: Text(
+          '$tileVal',
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5B3A1A),
           ),
         ),
       ),
