@@ -127,10 +127,11 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Theme(
-      data: buildGameTheme(Brightness.dark),
+      data: buildGameTheme(Theme.of(context).brightness),
       child: Scaffold(
-        backgroundColor: const Color(0xFF0B1120),
+        backgroundColor: isDark ? const Color(0xFF0B1120) : const Color(0xFFF1F5F9),
         appBar: GameAppBar(
           title: '15 Puzzle',
           score: Row(
