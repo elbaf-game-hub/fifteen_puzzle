@@ -13,7 +13,7 @@ void main() {
 
     expect(find.byType(FifteenPuzzlePage), findsOneWidget);
     expect(find.text('15 Puzzle'), findsOneWidget);
-    expect(find.text('Moves: 0'), findsOneWidget);
+    expect(find.text('MOVES'), findsOneWidget);
     expect(find.text('00:00'), findsOneWidget);
     expect(find.text('Shuffle'), findsOneWidget);
     expect(find.text('Hint'), findsOneWidget);
@@ -31,7 +31,7 @@ void main() {
     await tester.tap(find.byTooltip('Restart'));
     await tester.pump();
 
-    expect(find.text('Moves: 0'), findsOneWidget);
+    expect(find.text('MOVES'), findsOneWidget);
   });
 
   testWidgets('Tapping a movable tile increments moves count', (tester) async {

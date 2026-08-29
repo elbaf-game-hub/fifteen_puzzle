@@ -77,12 +77,12 @@ void main() {
 
     test('4. tap on adjacent tile swaps with blank and increments moves', () {
       final state = FifteenState.initial();
-      // Tile 14 is at index 14, adjacent to blank at 15
+      // Tile 15 is at index 14, adjacent to blank at index 15
       final nextState = state.tap(14);
 
       expect(nextState.moves, 1);
       expect(nextState.tiles[14], 0);
-      expect(nextState.tiles[15], 14);
+      expect(nextState.tiles[15], 15);
       expect(nextState.blankIndex, 14);
       expect(nextState.isSolved, isFalse);
     });
@@ -119,7 +119,7 @@ void main() {
       // Create a 1-move-to-win state
       final almostSolvedTiles = List<int>.from(FifteenState.solvedTiles);
       almostSolvedTiles[14] = 0;
-      almostSolvedTiles[15] = 14;
+      almostSolvedTiles[15] = 15;
 
       final almostSolvedState = FifteenState(
         tiles: almostSolvedTiles,
@@ -133,7 +133,7 @@ void main() {
       expect(almostSolvedState.isSolved, isFalse);
       expect(almostSolvedState.status, FifteenStatus.playing);
 
-      // Move 14 into blank at 14
+      // Move 15 into blank at 14
       final wonState = almostSolvedState.tap(15);
 
       expect(wonState.isSolved, isTrue);

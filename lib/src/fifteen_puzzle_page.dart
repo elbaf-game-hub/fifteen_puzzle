@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:game_assets/game_assets.dart';
 
 import 'fifteen_puzzle_state.dart';
@@ -128,47 +127,18 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = buildGameTheme(Brightness.light);
-
     return Theme(
-      data: theme,
+      data: buildGameTheme(Brightness.dark),
       child: Scaffold(
+        backgroundColor: const Color(0xFF0B1120),
         appBar: GameAppBar(
           title: '15 Puzzle',
           score: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: GameTokens.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(GameTokens.radiusSm),
-                ),
-                child: Text(
-                  'Moves: ${_state.moves}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: GameTokens.primary,
-                  ),
-                ),
-              ),
+              _buildStatPill('MOVES', '${_state.moves}', GameTokens.primary),
               const SizedBox(width: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: GameTokens.boardDark.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(GameTokens.radiusSm),
-                ),
-                child: Text(
-                  _formatDuration(_state.elapsed),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
+              _buildStatPill('TIME', _formatDuration(_state.elapsed), GameTokens.warning),
             ],
           ),
           onRestart: _restartGame,
@@ -181,6 +151,7 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
                 SnackBar(
                   content: Text('Hint: Tile $tileNum can move!'),
                   duration: const Duration(seconds: 1),
+                  behavior: SnackBarBehavior.floating,
                 ),
               );
             }
@@ -189,109 +160,108 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GameBoardArea(
-                    aspectRatio: 1.0,
-                    maxSide: 460,
-                    padding: const EdgeInsets.all(GameTokens.sm),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final gridSize = constraints.maxWidth;
-                        final tileSize = (gridSize - 24) / 4;
-
-                        return GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            mainAxisSpacing: 6,
-                            crossAxisSpacing: 6,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF030712),
+                        borderRadius: BorderRadius.circular(GameTokens.radiusLg),
+                        border: Border.all(
+                          color: const Color(0xFF1E293B),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            blurRadius: 24,
+                            offset: const Offset(0, 10),
                           ),
-                          itemCount: 16,
-                          itemBuilder: (context, index) {
-                            final tileVal = _state.tiles[index];
-                            final isBlank = tileVal == 0;
-                            final canSlide = _state.canMove(index);
-
-                            final String svgPath = isBlank
-                                ? 'assets/svg/fifteen_puzzle/tile_blank.svg'
-                                : 'assets/svg/fifteen_puzzle/tile_$tileVal.svg';
-
-                            return Semantics(
-                              button: !isBlank,
-                              label: isBlank
-                                  ? 'Empty space'
-                                  : 'Tile $tileVal${canSlide ? ', movable' : ''}',
-                              child: GestureDetector(
-                                onTap: () => _onTapTile(index),
-                                child: AnimatedContainer(
-                                  duration: GameTokens.durFast,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        GameTokens.radiusMd),
-                                    boxShadow: !isBlank
-                                        ? [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                  alpha: 0.08),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ]
-                                        : null,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        GameTokens.radiusMd),
-                                    child: SvgPicture.asset(
-                                      svgPath,
-                                      package: 'game_assets',
-                                      fit: BoxFit.cover,
-                                      placeholderBuilder: (context) =>
-                                          _buildFallbackTile(tileVal, isBlank),
-                                    ),
-                                  ),
-                                ),
+                        ],
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: 1.0,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                mainAxisSpacing: 8,
+                                crossAxisSpacing: 8,
                               ),
+                              itemCount: 16,
+                              itemBuilder: (context, index) {
+                                final tileVal = _state.tiles[index];
+                                final isBlank = tileVal == 0;
+                                final canSlide = _state.canMove(index);
+
+                                final String svgPath = isBlank
+                                    ? 'assets/svg/fifteen_puzzle/tile_blank.svg'
+                                    : 'assets/svg/fifteen_puzzle/tile_$tileVal.svg';
+
+                                return Semantics(
+                                  button: !isBlank,
+                                  label: isBlank
+                                      ? 'Empty space'
+                                      : 'Tile $tileVal${canSlide ? ', movable' : ''}',
+                                  child: GestureDetector(
+                                    onTap: () => _onTapTile(index),
+                                    child: _buildTileContainer(tileVal, isBlank, svgPath),
+                                  ),
+                                );
+                              },
                             );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 12,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      FilledButton.icon(
-                        onPressed: _restartGame,
-                        icon: const Icon(Icons.shuffle),
-                        label: const Text('Shuffle'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          // Quick hint
-                          final valid = _state.validMoves();
-                          if (valid.isNotEmpty) {
-                            final tileNum = _state.tiles[valid.first];
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Try moving tile $tileNum'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.lightbulb_outline),
-                        label: const Text('Hint'),
-                      ),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FilledButton.icon(
+                          onPressed: _restartGame,
+                          icon: const Icon(Icons.shuffle_rounded),
+                          label: const Text('Shuffle'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: GameTokens.primary,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            // Quick hint
+                            final valid = _state.validMoves();
+                            if (valid.isNotEmpty) {
+                              final tileNum = _state.tiles[valid.first];
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Try moving tile $tileNum'),
+                                  duration: const Duration(seconds: 1),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.lightbulb_outline_rounded),
+                          label: const Text('Hint'),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFF334155)),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -300,30 +270,109 @@ class _FifteenPuzzlePageState extends State<FifteenPuzzlePage> {
     );
   }
 
-  Widget _buildFallbackTile(int tileVal, bool isBlank) {
+  Widget _buildStatPill(String label, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(GameTokens.radiusSm),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTileContainer(int tileVal, bool isBlank, String svgPath) {
     if (isBlank) {
       return Container(
         decoration: BoxDecoration(
-          color: GameTokens.boardDark.withValues(alpha: 0.3),
+          color: const Color(0xFF0F172A),
           borderRadius: BorderRadius.circular(GameTokens.radiusMd),
+          border: Border.all(color: const Color(0xFF1E293B), width: 1),
         ),
       );
     }
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF2D9A1),
-        borderRadius: BorderRadius.circular(GameTokens.radiusMd),
-        border: Border.all(color: const Color(0xFFB89A6A), width: 2),
-      ),
-      child: Center(
-        child: Text(
-          '$tileVal',
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF5B3A1A),
-          ),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
         ),
+        borderRadius: BorderRadius.circular(GameTokens.radiusMd),
+        border: Border.all(
+          color: const Color(0xFF60A5FA).withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1D4ED8).withValues(alpha: 0.35),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Top shine highlight
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              height: 12,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.3),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: Text(
+              '$tileVal',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black38,
+                    offset: Offset(0, 2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
