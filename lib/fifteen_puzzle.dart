@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:game_module/game_module.dart';
+library fifteen_puzzle;
 
-part 'src/fifteen_puzzle_module.dart';
-part 'src/fifteen_puzzle_page.dart';
+export 'src/fifteen_puzzle_module.dart';
+export 'src/fifteen_puzzle_page.dart';
+export 'src/fifteen_puzzle_state.dart';
